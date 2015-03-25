@@ -13,9 +13,9 @@
   with_items:
     - 127.0.0.1
     - ::1
-    - localhost
     - "{{ inventory_hostname_short }}"
-#  when: mycnf_file.stat.exists == false
+    - localhost
+  when: mycnf_file.stat.exists == false
 
 # Has to be after the root password assignment, for idempotency.
 - name: Copy .my.cnf file with root password credentials.
