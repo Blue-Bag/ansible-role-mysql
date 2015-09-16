@@ -5,7 +5,9 @@ socket = {{ mysql_socket }}
 
 [mysqld]
 port = {{ mysql_port }}
+{% if mysql_bind_address != 'any' %}
 bind-address = {{ mysql_bind_address }}
+{% endif %}
 datadir = {{ mysql_datadir }}
 socket = {{ mysql_socket }}
 
