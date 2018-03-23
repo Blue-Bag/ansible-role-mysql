@@ -76,20 +76,27 @@ mysql_lower_case_table_names: "0"
 mysql_wait_timeout: "28800"
 mysql_event_scheduler_state: "OFF"
 
+
+## legacy and redundant vars
+# mysql_thread_concurrency
+# mysql_innodb_additional_mem_pool_size
+# both deprecated
 # Try number of CPU's * 2 for thread_concurrency.
 # cat /proc/cpuinfo | grep processor | wc -l
 # 8 cores = 16
 # deprecated and pointless?
 # https://www.percona.com/blog/2012/06/04/thread_concurrency-doesnt-do-what-you-expect/
-mysql_thread_concurrency: 2
+#mysql_thread_concurrency: 2
+
+# https://www.percona.com/blog/2006/09/29/what-to-tune-in-mysql-server-after-installation/
+# http://optimmysql.blogspot.co.uk/2008/04/variable-day-out-8-innodbadditionalmemp.html
+# mysql_innodb_additional_mem_pool_size: "20M"
 
 # InnoDB settings.
 mysql_innodb_file_per_table: "1"
 # Set .._buffer_pool_size up to 80% of RAM but beware of setting too high.
 mysql_innodb_buffer_pool_size: "256M"
-# https://www.percona.com/blog/2006/09/29/what-to-tune-in-mysql-server-after-installation/
-# http://optimmysql.blogspot.co.uk/2008/04/variable-day-out-8-innodbadditionalmemp.html
-mysql_innodb_additional_mem_pool_size: "20M"
+
 
 # Set .._log_file_size to 25% of buffer pool size.
 mysql_innodb_log_file_size: "64M"
