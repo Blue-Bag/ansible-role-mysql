@@ -10,3 +10,21 @@
     encrypted: "{{ item.encrypted | default('no') }}"
   with_items: "{{ mysql_users }}"
   no_log: true
+
+- name: set fact3 for inv ips
+  set_fact:
+    db_allowed_adminips: "{{ incoming_ip_whitelist|map(attribute='ip')|list|unique }}"
+
+- name: Ensure MySQL Admin users are present.
+  mysql_user:
+    name: "{{ item[0].name }}"
+    host: "{{ item[1]| default('localhost') }}"
+    password: "{{ item[0].password }}"
+    priv: "{{ item[0].priv | default('*.*:USAGE') }}"
+    append_privs: yes
+    state: present
+  become: true
+  when: mysql_adminusers is defined
+  with_nested:
+    - "{{mysql_adminusers}}"
+    - "{{db_allowed_adminips}}"
