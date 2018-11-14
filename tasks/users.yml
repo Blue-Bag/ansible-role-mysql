@@ -1,4 +1,7 @@
 ---
+
+# need to flush privileges before this sometimes....
+
 - name: Ensure MySQL users are present.
   mysql_user:
     name: "{{ item.name }}"
@@ -10,11 +13,13 @@
     encrypted: "{{ item.encrypted | default('no') }}"
   with_items: "{{ mysql_users }}"
   no_log: true
+  tags: [mysql_users]
 
 - name: set fact3 for inv ips
   set_fact:
     db_allowed_adminips: "{{ incoming_ip_whitelist|map(attribute='ip')|list|unique }}"
-
+  tags: [mysql_users]
+# should check we have allowed ips!!
 - name: Ensure MySQL Admin users are present.
   mysql_user:
     name: "{{ item[0].name }}"
@@ -28,3 +33,4 @@
   with_nested:
     - "{{mysql_adminusers}}"
     - "{{db_allowed_adminips}}"
+  tags: [mysql_users]
