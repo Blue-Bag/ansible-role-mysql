@@ -29,6 +29,8 @@
   changed_when: false
   when: not mysql_remote_login
 
+  #  need to flush privileges after that
+
 - name: Get list of hosts for the root user.
   command: mysql -NBe "SELECT Host FROM mysql.user WHERE User = '{{ mysql_root_username }}' ORDER BY (Host='localhost') ASC"
   register: mysql_root_hosts
