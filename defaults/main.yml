@@ -149,3 +149,14 @@ mysql_replication_role: ''
 mysql_replication_master: ''
 # Same keys as `mysql_users` above.
 mysql_replication_user: []
+
+## allow for use of offical mysql repo
+# see https://github.com/rchouinard/ansible-role-mysql-community-repo/blob/master/tasks/setup-Debian.yml
+mysql_add_repo: False
+mysql_version: '5.7'
+mysql_repo_rpm_url: "https://repo.mysql.com/mysql57-community-release-{% if ansible_distribution == 'Fedora' %}fc{% else %}el{% endif %}{{ ansible_distribution_major_version }}.rpm"
+mysql_repo_deb_url: "https://repo.mysql.com/mysql-apt-config_0.8.9-1_all.deb"
+mysql_repo_key_url: "https://repo.mysql.com/RPM-GPG-KEY-mysql"
+mysql_repo_key_id:  "8C718D3B5072E1F5"
+
+

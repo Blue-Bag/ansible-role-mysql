@@ -3,6 +3,32 @@
   stat: path=/etc/init.d/mysql
   register: mysql_installed
 
+- block:
+    - name: Install repository repo
+      package:
+        deb: "{{ mysql_repo_deb_url }}"
+        state: present
+
+    - name: Import repository GPG key
+      apt_key:
+        id: "{{ mysql_repo_key_id }}"
+        url: "{{ mysql_repo_key_url }}"
+        state: present
+
+    - name: Configure the apt repo sources for MySQL.
+      template:
+        src: "apt.mysql.list.j2"
+        dest: "/etc/apt/sources.list.d/mysql.list"
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Pretask | Update apt cache | Debian
+      apt: update_cache=yes cache_valid_time=3600
+
+  when: mysql_add_repo
+
+
 - name: Update apt cache if MySQL is not yet installed.
   apt: update_cache=yes
   when: mysql_installed.stat.exists == false
