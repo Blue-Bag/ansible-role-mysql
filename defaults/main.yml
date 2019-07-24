@@ -139,6 +139,21 @@ mysql_users: []
 #     password: secret
 #     priv: *.*:USAGE
 
+# A specifc set of users with ips defined
+mysql_other_users: []
+# e.g.
+# mysql_other_users:
+#   - {
+#      name: "{{ backup_user }}",
+#      password: "{{ backup_password }}",
+#      priv: "*.*:ALL,GRANT",
+#      ips: "{{ backup_user_ips }}"
+#    }
+
+# backup_user_ips:
+#   - '10.10.255.100'
+#   - '10.10.255.101'
+
 
 # Replication settings (replication is only enabled if master/user have values).
 mysql_server_id: "1"
@@ -158,5 +173,3 @@ mysql_repo_rpm_url: "https://repo.mysql.com/mysql57-community-release-{% if ansi
 mysql_repo_deb_url: "https://repo.mysql.com/mysql-apt-config_0.8.9-1_all.deb"
 mysql_repo_key_url: "https://repo.mysql.com/RPM-GPG-KEY-mysql"
 mysql_repo_key_id:  "8C718D3B5072E1F5"
-
-
