@@ -78,6 +78,21 @@ mysql_lower_case_table_names: "0"
 mysql_wait_timeout: "28800"
 mysql_event_scheduler_state: "OFF"
 
+# performance enhancements
+# mysql_transaction_isolation: 'READ-COMMITTED'
+# note this is set specifically for replication below
+# if not using replication the dafult can be set here
+# the default is STATEMENT but ROW can be better for other performance issues
+# mysql_binlog_format: 'ROW'
+
+# not the implications of this for consecutive ids and replications etc
+# must use ROW format for binlog if not using 1
+# mysql_innodb_autoinc_lock_mode: 2
+
+mysql_transaction_isolation: ''
+mysql_binlog_format: ''
+mysql_innodb_autoinc_lock_mode: ''
+
 
 ## legacy and redundant vars
 # mysql_thread_concurrency
@@ -158,7 +173,7 @@ mysql_other_users: []
 # Replication settings (replication is only enabled if master/user have values).
 mysql_server_id: "1"
 mysql_max_binlog_size: "100M"
-mysql_binlog_format: "ROW"
+mysql_rep_binlog_format: "ROW"
 mysql_expire_logs_days: "10"
 mysql_replication_role: ''
 mysql_replication_master: ''
