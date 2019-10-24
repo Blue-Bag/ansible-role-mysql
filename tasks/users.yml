@@ -1,9 +1,56 @@
 ---
+
+# need to flush privileges before this sometimes....
+
 - name: Ensure MySQL users are present.
   mysql_user:
     name: "{{ item.name }}"
     host: "{{ item.host | default('localhost') }}"
     password: "{{ item.password }}"
     priv: "{{ item.priv | default('*.*:USAGE') }}"
+    state: "{{ item.state | default('present') }}"
+    append_privs: "{{ item.append_privs | default('no') }}"
+    encrypted: "{{ item.encrypted | default('no') }}"
+  with_items: "{{ mysql_users }}"
+  become: true
+  no_log: "{{ not item.encrypted | default('yes') }}"
+  tags: [mysql_users]
+
+- name: set fact3 for inv ips
+  set_fact:
+    db_allowed_adminips: "{{ incoming_ip_whitelist|map(attribute='ip')|list|unique }}"
+  tags: [mysql_users]
+# should check we have allowed ips!!
+
+- name: Ensure MySQL Admin users are present.
+  mysql_user:
+    name: "{{ item[0].name }}"
+    host: "{{ item[1]| default('localhost') }}"
+    password: "{{ item[0].password }}"
+    priv: "{{ item[0].priv | default('*.*:USAGE') }}"
+    append_privs: yes
     state: present
-  with_items: "{{mysql_users}}"
+  become: true
+  no_log: "{{ not item.0.encrypted | default('yes') }}"
+  when: mysql_adminusers is defined
+  with_nested:
+    - "{{mysql_adminusers}}"
+    - "{{db_allowed_adminips}}"
+  tags: [mysql_users]
+
+- name: Ensure other MySQL users are present.
+  mysql_user:
+    name: "{{ item.0.name }}"
+    host: "{{ item.1| default('localhost') }}"
+    password: "{{ item.0.password }}"
+    priv: "{{ item.0.priv | default('*.*:USAGE') }}"
+    encrypted: "{{ item.0.encrypted }}"
+    append_privs: yes
+    state: present
+  become: true
+  no_log: "{{ not item.0.encrypted | default('yes') }}"
+  when: mysql_other_users is defined
+  with_subelements:
+     - "{{ mysql_other_users }}"
+     - ips
+  tags: [mysql_users]

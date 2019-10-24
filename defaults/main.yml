@@ -1,9 +1,29 @@
 ---
+# Set this to the user ansible is logging in as - should have root
+# or sudo access
 mysql_user_home: /root
+mysql_user_name: root
+mysql_user_password: root
+
+# The default root user installed by mysql - almost always root
+mysql_root_home: /root
 mysql_root_username: root
 mysql_root_password: root
 
+mysql_remote_login: yes
+
+# Set this to `yes` to forcibly update the root password.
+mysql_root_password_update: no
+mysql_user_password_update: no
+
 mysql_enabled_on_startup: yes
+
+# update my.cnf. each time role is run? yes | no
+overwrite_global_mycnf: yes
+
+# The following variables have a default value depending on operating system.
+# mysql_config_file: /etc/my.cnf
+# mysql_config_include_dir: /etc/my.cnf.d
 
 # Pass in a comma-separated list of repos to use (e.g. "remi,epel"). Used only
 # for RedHat systems (and derivatives).
@@ -19,7 +39,21 @@ mysql_enablerepo: ""
 # MySQL connection settings.
 mysql_port: "3306"
 mysql_bind_address: '0.0.0.0'
+mysql_skip_name_resolve: no
 mysql_datadir: /var/lib/mysql
+mysql_sql_mode: ''
+# The following variables have a default value depending on operating system.
+# mysql_pid_file: /var/run/mysqld/mysqld.pid
+# mysql_socket: /var/lib/mysql/mysql.sock
+
+# Log file settings.
+mysql_log_file_group: mysql
+
+# Slow query log settings.
+mysql_slow_query_log_enabled: no
+mysql_slow_query_time: "2"
+# The following variable has a default value depending on operating system.
+# mysql_slow_query_log_file: /var/log/mysql-slow.log
 
 # Memory settings (default values optimized ~512MB RAM).
 mysql_key_buffer_size: "256M"
@@ -30,50 +64,116 @@ mysql_read_buffer_size: "1M"
 mysql_read_rnd_buffer_size: "4M"
 mysql_myisam_sort_buffer_size: "64M"
 mysql_thread_cache_size: "8"
+mysql_query_cache_type: "0"
 mysql_query_cache_size: "16M"
+mysql_query_cache_limit: "1M"
+mysql_max_connections: "151"
+mysql_tmp_table_size: "16M"
+mysql_max_heap_table_size: "16M"
+mysql_group_concat_max_len: "1024"
+mysql_join_buffer_size: "262144"
 
 # Other settings.
-mysql_wait_timeout: 28800
+mysql_lower_case_table_names: "0"
+mysql_wait_timeout: "28800"
+mysql_event_scheduler_state: "OFF"
 
+# performance enhancements (see readme)
+mysql_transaction_isolation: ''
+mysql_binlog_format: ''
+mysql_innodb_autoinc_lock_mode: ''
+
+## legacy and redundant vars
+# mysql_thread_concurrency
+# mysql_innodb_additional_mem_pool_size
+# both deprecated
 # Try number of CPU's * 2 for thread_concurrency.
-mysql_thread_concurrency: 2
+# cat /proc/cpuinfo | grep processor | wc -l
+# 8 cores = 16
+# deprecated and pointless?
+# https://www.percona.com/blog/2012/06/04/thread_concurrency-doesnt-do-what-you-expect/
+#mysql_thread_concurrency: 2
+
+# https://www.percona.com/blog/2006/09/29/what-to-tune-in-mysql-server-after-installation/
+# http://optimmysql.blogspot.co.uk/2008/04/variable-day-out-8-innodbadditionalmemp.html
+# mysql_innodb_additional_mem_pool_size: "20M"
 
 # InnoDB settings.
-# Set .._buffer_pool_size up to 80% of RAM but beware of setting too high.
 mysql_innodb_file_per_table: "1"
+# Set .._buffer_pool_size up to 80% of RAM but beware of setting too high.
 mysql_innodb_buffer_pool_size: "256M"
-mysql_innodb_additional_mem_pool_size: "20M"
+
+
 # Set .._log_file_size to 25% of buffer pool size.
 mysql_innodb_log_file_size: "64M"
 mysql_innodb_log_buffer_size: "8M"
 # set to 1 for critical sites or 2 for most (only loose a second of logs on critical outage)
 mysql_innodb_flush_log_at_trx_commit: "1"
-mysql_innodb_lock_wait_timeout: 50
+mysql_innodb_lock_wait_timeout: "50"
+
+# These settings require MySQL > 5.5.
+mysql_innodb_large_prefix: "1"
+mysql_innodb_file_format: "barracuda"
 
 # mysqldump settings.
 mysql_mysqldump_max_allowed_packet: "64M"
 
 # Logging settings.
-mysql_log_error: /var/log/mysqld.log
-mysql_syslog_tag: mysqld
+mysql_log: ""
+# The following variables have a default value depending on operating system.
+# mysql_log_error: /var/log/mysql/mysql.err
+# mysql_syslog_tag: mysql
+
+
+mysql_config_include_files: []
+#  - src: path/relative/to/playbook/file.cnf
+#  - { src: path/relative/to/playbook/anotherfile.cnf, force: yes }
 
 # Databases.
 mysql_databases: []
-# Full example:
-# mysql_databases:
-#   - { name: example, collation: utf8_general_ci, encoding: utf8, replicate: 1 }
+#   - name: example
+#     collation: utf8_general_ci
+#     encoding: utf8
+#     replicate: 1
 
 # Users
 mysql_users: []
-# Full Example:
-# mysql_users:
-#   - { name: example, host: 127.0.0.1, password: secret, priv: *.*:USAGE }
+#   - name: example
+#     host: 127.0.0.1
+#     password: secret
+#     priv: *.*:USAGE
+
+# A specifc set of users with ips defined
+mysql_other_users: []
+# e.g.
+# mysql_other_users:
+#   - {
+#      name: "{{ backup_user }}",
+#      password: "{{ backup_password }}",
+#      priv: "*.*:ALL,GRANT",
+#      ips: "{{ backup_user_ips }}"
+#    }
+
+# backup_user_ips:
+#   - '10.10.255.100'
+#   - '10.10.255.101'
+
 
 # Replication settings (replication is only enabled if master/user have values).
 mysql_server_id: "1"
 mysql_max_binlog_size: "100M"
+mysql_rep_binlog_format: "ROW"
 mysql_expire_logs_days: "10"
-mysql_replication_role: master
+mysql_replication_role: ''
 mysql_replication_master: ''
 # Same keys as `mysql_users` above.
 mysql_replication_user: []
+
+## allow for use of offical mysql repo
+# see https://github.com/rchouinard/ansible-role-mysql-community-repo/blob/master/tasks/setup-Debian.yml
+mysql_add_repo: False
+mysql_version: '5.7'
+mysql_repo_rpm_url: "https://repo.mysql.com/mysql57-community-release-{% if ansible_distribution == 'Fedora' %}fc{% else %}el{% endif %}{{ ansible_distribution_major_version }}.rpm"
+mysql_repo_deb_url: "https://repo.mysql.com/mysql-apt-config_0.8.9-1_all.deb"
+mysql_repo_key_url: "https://repo.mysql.com/RPM-GPG-KEY-mysql"
+mysql_repo_key_id:  "8C718D3B5072E1F5"
