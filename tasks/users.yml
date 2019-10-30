@@ -29,6 +29,7 @@
     password: "{{ item[0].password }}"
     priv: "{{ item[0].priv | default('*.*:USAGE') }}"
     append_privs: yes
+    encrypted: "{{ item[0].encrypted | default('no') }}"
     state: present
   become: true
   no_log: "{{ not item.0.encrypted | default('yes') }}"
