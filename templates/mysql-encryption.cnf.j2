@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+[mysqld]
+plugin_load_add = {{ mysql_encrypt_plugin }}
+file_key_management = {{ mysql_encrypt_plugin_fkm.state }}
+file_key_management_encryption_algorithm = {{ mysql_encrypt_plugin_fkm.encryption_algorithm }}
+file_key_management_filename = {{ mysql_encrypt_plugin_fkm.filename }}
+file_key_management_filekey = {{ mysql_encrypt_plugin_fkm.filekey }}
+innodb_encrypt_tables = {{ mysql_encrypt_settings.innodb_encrypt_tables }}
+innodb_encrypt_log = {{ mysql_encrypt_settings.innodb_encrypt_log }}
+aria_encrypt_tables = {{ mysql_encrypt_settings.aria_encrypt_tables }}
+encrypt_tmp_disk_tables = {{ mysql_encrypt_settings.encrypt_tmp_disk_tables }}
+innodb_encryption_threads = {{ mysql_encrypt_settings.innodb_encryption_threads }}
+# Introduced: MariaDB 10.2.26, MariaDB 10.3.17, MariaDB 10.4.7
+{% if __mysql_encrypt_supports_enc_tmp_tables %}
+innodb_encrypt_temporary_tables = {{ mysql_encrypt_settings.innodb_encrypt_temporary_tables }}
+{% endif %}
+encrypt_tmp_files = {{ mysql_encrypt_settings.encrypt_tmp_files }}
+# Encryption parameters
+encrypt_binlog = {{ mysql_encrypt_settings.encrypt_binlog }}
+# Do not rotate key
+#innodb_encryption_rotate_key_age = {{ mysql_encrypt_settings.innodb_encryption_rotate_key_age }}

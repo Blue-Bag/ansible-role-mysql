@@ -1,0 +1,49 @@
+# set up encryption for the gcp_spanner_database
+
+- name: Create the target keys directory
+  file:
+    path: "{{ mysql_encrypt_keydir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+
+- name: Put up the key file
+  copy:
+    dest: "{{ mysql_encrypt_keydir}}/{{ mysql_encrypt_keyfile }}"
+    content: "{{ mysql_encrypt_key }}"
+    owner: mysql
+    group: root
+    mode: 0440
+  become: yes
+
+- name: Put up the unencrypted keys
+  lineinfile:
+    path: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt"
+    line: "{{ item }}"
+    create: yes
+  with_items: "{{ mysql_encrypt_keys }}"
+
+# openssl enc -aes-256-cbc -md sha1 -pass: file:{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_keyfile }} -in {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt -out {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc
+- name: Encrypt the keys
+  shell:  "openssl enc -aes-256-cbc -md sha1 -passin file:{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_keyfile }} -in {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt -out {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc"
+  become: yes
+  args:
+    creates: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc"
+
+- name: Delete the unencrypted keys
+  file:
+     path: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt"
+     state: absent
+  become: yes
+
+- name: Put up the encryption config
+  template:
+    src: 'mysql-encryption.cnf.j2'
+    dest: "{{ mysql_config_include_dir }}/{{ mysql_encrypt_confname }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mysql
+  become: yes

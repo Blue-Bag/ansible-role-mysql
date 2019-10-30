@@ -24,3 +24,6 @@
 - import_tasks: databases.yml
 - import_tasks: users.yml
 - import_tasks: replication.yml
+
+- include_tasks: encrypt-at-rest.yml
+  when: mysql_encrypt_at_rest | bool
