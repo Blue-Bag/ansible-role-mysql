@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+# {{ ansible_managed | comment }}
 [mysqld]
 plugin_load_add = {{ mysql_encrypt_plugin }}
 file_key_management = {{ mysql_encrypt_plugin_fkm.state }}
