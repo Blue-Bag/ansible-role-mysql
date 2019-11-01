@@ -1,0 +1,10 @@
+# {{ ansible_managed | comment }}
+[mysqld]
+ssl = {{ mysql_tls_state | default('off')}}
+ssl-ca = '{{ mysql_tls_certdir}}/{{ mysql_tls_cert_prefix }}-cert.pem'
+ssl-cert = '{{ mysql_tls_certdir}}/{{ mysql_tls_cert_prefix }}server-cert.pem'
+ssl-key = '{{ mysql_tls_certdir}}/{{ mysql_tls_cert_prefix }}server-key.pem'
+#
+# Accept only connections using the latest and most secure TLS protocol version.
+# ..when MariaDB is compiled with OpenSSL:
+#ssl-cipher = TLSv1.2

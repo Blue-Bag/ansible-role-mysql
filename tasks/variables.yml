@@ -72,3 +72,8 @@
   set_fact:
     mysql_encrypt_keydir: "{{ __mysql_encrypt_keydir }}"
   when: mysql_encrypt_keydir is not defined
+
+- name: Define mysql_tls_confdir.
+  set_fact:
+    mysql_tls_confdir: "{{ __mysql_tls_confdir }}"
+  when: mysql_tls_confdir is not defined

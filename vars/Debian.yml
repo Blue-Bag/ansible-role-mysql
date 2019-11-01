@@ -19,3 +19,5 @@ __mysql_encrypt_supports_enc_tmp_tables: false
 __mysql_config_include_dirs:
   - '/etc/mysql/conf.d/'
   - '/etc/mysql/mariadb.conf.d/'
+
+__mysql_tls_confdir: '/etc/mysql/mariadb.conf.d/'

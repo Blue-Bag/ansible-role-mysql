@@ -1,0 +1,11 @@
+[req]
+distinguished_name = req_distinguished_name
+prompt = no
+[req_distinguished_name]
+C = {{ mysql_tls_cfg_country }}
+ST = {{ mysql_tls_cfg_state }}
+L = {{ mysql_tls_cfg_location | default ('')}}
+O = {{ mysql_tls_cfg_orgname }}
+OU = {{ mysql_tls_cfg_orgunit | default('') }}
+emailAddress = {{ mysql_tls_cfg_email }}
+CN = {{ mysql_tls_cfg_orgurl }}

@@ -208,3 +208,34 @@ mysql_encrypt_settings:
   encrypt_tmp_files: 'ON'
   encrypt_binlog: 1
   innodb_encryption_rotate_key_age: 0
+
+
+mysql_tls_setup: false
+# on | off
+mysql_tls_state: off
+mysql_tls_certdir: '/etc/mysql/tls'
+mysql_tls_config_files:
+      - name: '55-server-tls.cnf'
+        path: "{{ mysql_tls_confdir }}"
+        src: 'mysql-tls-server.cnf.j2'
+      - name: '55-clients-tls.cnf'
+        path: "{{ mysql_tls_confdir }}"
+        src: 'mysql-tls-clients.cnf.j2'
+
+mysql_tls_cert_prefix: mysqldb
+
+mysql_tls_certdir_owner: 'mysql'
+mysql_tls_certdir_group: 'root'
+mysql_tls_certdir_perms: '0750'
+
+mysql_tls_upload_certs: false
+mysql_tls_generate_certs: true
+mysql_tls_update_cfg: true
+
+
+mysql_tls_cert_files: []
+
+mysql_tls_cfg_country: 'UK'
+mysql_tls_cfg_state: 'Somerset'
+mysql_tls_cfg_orgname: 'Widgets UK'
+mysql_tls_cfg_email: 'me@widgetsuk.com'

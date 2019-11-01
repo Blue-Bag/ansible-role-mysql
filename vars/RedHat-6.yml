@@ -12,3 +12,5 @@ __mysql_config_include_dir: /etc/my.cnf.d
 __mysql_socket: /var/lib/mysql/mysql.sock
 __mysql_supports_innodb_large_prefix: false
 __mysql_encrypt_keydir: /etc/mysql/keys
+
+__mysql_tls_confdir: /etc/my.cnf.d

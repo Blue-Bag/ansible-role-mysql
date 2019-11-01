@@ -27,3 +27,10 @@
 
 - include_tasks: encrypt-at-rest.yml
   when: mysql_encrypt_at_rest | bool
+
+- include_tasks: secure-tls-cfg.yml
+  when: mysql_tls_setup | bool
+  tags:
+    - 'role::mysql'
+    - 'role::mysql::config'
+    - 'role::mysql::tls'
