@@ -105,9 +105,65 @@ innodb_autoinc_lock_mode=2
 binlog_format=row
 transaction-isolation=READ-COMMITTED
 ```
-Note that last seeting actually sets the variable tx_isolation
-This ofetn casues confusion
+Note that last setting actually sets the variable tx_isolation
+This often casues confusion
 
+## Encryption at rest
+This sets up database encryption
+
+## Secure TLS communication
+This sets up certificates for SSL/TLS communication with clients
+Turn on this setup with
+
+```
+mysql_tls_setup: true
+```
+Takes the following vars
+
+```
+# on | off
+mysql_tls_state: off  <-- turn on or off  ssl in the db
+mysql_tls_path: '/etc/mysql/ssl'
+mysql_tls_server_config_file:
+   - {name: '55-server-tls.cnf', path: '/etc/mysql/mariadb.conf.d'}
+mysql_tls_client_config_file:
+   - {name: '55-clients-tls.cnf', path: '/etc/mysql/mariadb.conf.d'}
+```
+
+Whether to generate the certificates on the server
+False means you will provide your own (useful for clusters)
+```
+mysql_tls_generate_certs: true
+```
+
+If generating your own then you need a prexix for the certs
+This will prexis the CA, Server and client certificates and keys
+
+```
+mysql_tls_cert_prefix: mysqldb
+```
+
+If providing your own then provide a list of at least the following:
+Note the file name should be the full path to the source file
+
+```
+mysql_tls_cert_files:
+  - name: 'mysqldbdb-cert.pem'                          <-- the ssl-ca
+    src:  '{{ inventory_dir }}/common/files/ssl/DB-TLS'
+  - name: 'mysqldbdbserver-cert.pem'                    <-- the ssl server cert
+    src:  '{{ inventory_dir }}/common/files/ssl/DB-TLS'
+  - name: 'mysqldbdbserver-key.pem'                     <-- the ssl server key
+    src: '{{ inventory_dir }}/common/files/ssl/DB-TLS'
+
+```
+and possibly the client files
+```
+ - name: 'mysqldbdbclient-cert.pem'                     <-- the ssl client cert
+    src: '{{ inventory_dir }}/common/files/ssl/DB-TLS'
+  - name: 'mysqldbdbclient-key.pem'                     <-- the ssl client key
+    src: '{{ inventory_dir }}/common/files/ssl/DB-TLS'
+
+```
 ## Dependencies
 
 None.

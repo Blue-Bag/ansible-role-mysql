@@ -24,3 +24,17 @@
 - import_tasks: databases.yml
 - import_tasks: users.yml
 - import_tasks: replication.yml
+
+- include_tasks: encrypt-at-rest.yml
+  when: mysql_encrypt_at_rest | bool
+  tags:
+  - 'role::mysql'
+  - 'role::mysql::config'
+  - 'role::mysql::encrypt'
+
+- include_tasks: secure-tls-cfg.yml
+  when: mysql_tls_setup | bool
+  tags:
+    - 'role::mysql'
+    - 'role::mysql::config'
+    - 'role::mysql::tls'

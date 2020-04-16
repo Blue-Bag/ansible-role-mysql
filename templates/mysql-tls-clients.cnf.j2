@@ -1,0 +1,7 @@
+# {{ ansible_managed | comment }}
+[mysql]
+# Default is Latin1, if you need UTF-8 set this (also in server section)
+default-character-set = utf8mb4
+ssl-ca =  {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem
+ssl-cert =  {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-cert.pem
+ssl-key =  {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem
