@@ -1,55 +1,28 @@
 ---
 language: python
-python: "2.7"
+services: docker
 
 env:
-  - SITE=test.yml
-
-before_install:
-  - sudo apt-get update -qq
-
-  # Remove MySQL. Completely and totally.
-  - sudo apt-get remove --purge 'mysql*'
-  - sudo apt-get autoremove
-  - sudo apt-get autoclean
-  - sudo rm -rf /var/lib/mysql
-  - sudo truncate -s 0 /var/log/mysql/error.log
+  global:
+    - ROLE_NAME: mysql
+  matrix:
+    - MOLECULE_DISTRO: centos8
+    - MOLECULE_DISTRO: centos7
+    - MOLECULE_DISTRO: centos6
+    - MOLECULE_DISTRO: ubuntu1804
+    - MOLECULE_DISTRO: ubuntu1604
+    - MOLECULE_DISTRO: debian10
 
 install:
-  # Install Ansible.
-  - pip install ansible
-
-  # Add ansible.cfg to pick up roles path.
-  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+  # Install test dependencies.
+  - pip install molecule yamllint ansible-lint docker
 
 script:
-  # Check the role/playbook's syntax.
-  - "ansible-playbook -i tests/inventory tests/$SITE --syntax-check"
+  # Run tests.
+  - molecule test
 
-  # Run the role/playbook with ansible-playbook.
-  - "ansible-playbook -i tests/inventory tests/$SITE --connection=local --sudo"
-
-  # Run the role/playbook again, checking to make sure it's idempotent.
-  - >
-    ansible-playbook -i tests/inventory tests/$SITE --connection=local --sudo
-    | grep -q 'changed=0.*failed=0'
-    && (echo 'Idempotence test: pass' && exit 0)
-    || (echo 'Idempotence test: fail' && exit 1)
-
-  # Some MySQL debugging (show all the logs).
-  - "sudo ls -lah /var/log"
-  - "sudo cat /var/log/mysql/error.log"
-
-  # Check to make sure we can connect to MySQL via Unix socket.
-  - >
-    mysql -u root -proot -e 'show databases;'
-    | grep -q 'performance_schema'
-    && (echo 'MySQL running normally' && exit 0)
-    || (echo 'MySQL not running' && exit 1)
-
-  # Check to make sure we can connect to MySQL via TCP.
-  - >
-    mysql -u root -proot -h 127.0.0.1 -e 'show databases;'
-    | grep -q 'performance_schema'
-    && (echo 'MySQL running normally' && exit 0)
-    || (echo 'MySQL not running' && exit 1)
+# yamllint disable rule:line-length
+notifications:
+  slack:
+    secure: eB3bo5EPiQuLie3rDO27+Y+F+PToI5KtspeGdFOjjSoT3/pz0ShwMZ89jBMYv+U+WjchWDmuf3MAvpl9nzWiVEC3xaZzbnjbcm7JfMPgwd0iGmT7WowaXaVMHF+N6ejCe9GkomGb49Lq0srlH90VVBbMEUutWcuMhY9bK45WeXvxhx1or8LiWfZZCkCejX5JBfgcSHEUi6hyorzYgI27Q/v83FkTlCDaRPkYMEPQbgZfCEMI03WS90nrIlmfRKL/HVdUc2uk36QR6ZU1t1yJsg+YycRZkymKIoONLbg+U9Q1t4KZ/BT0n3V232NBp1WolHF5btxU/b7i/UyVKvgCGG0xnzU5BfF1Z3EqmAmNSdh9QGywOm3WZfqOcB00P67cJnsDJFqaZLQGbAVbfXPNlvEC0/oSxwP0gGjC9Y01B0sqJXtJmuoip9W0m9CJGPSiIJD+4Hbn4YnKNZ/ERm7+SDWSPSyy3WaYpssoOe659oy3TAloA2HkaZf1vDrBM+8brAxtTLPC9gwYWan6Sg3fC0C2+a14ANBjwoGfURbzH8Z4HY9VJQo9aZ6JVOkh5Ii4ZV0az2ReS7pc6vGcZLWdBlP/ykIiBcBvxRvwWNjzanFhARKSKzIOmxmQvfjtS3xB8UYWW6YeNGvnLXJib4gMmJIQhFe/voC2MWHTYpaSxv0=
+# yamllint enable rule:line-length
