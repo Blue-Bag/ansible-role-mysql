@@ -35,8 +35,8 @@
   no_log: "{{ not item.0.encrypted | default('yes') }}"
   when: mysql_adminusers is defined
   with_nested:
-    - "{{mysql_adminusers}}"
-    - "{{db_allowed_adminips}}"
+    - "{{ mysql_adminusers }}"
+    - "{{ db_allowed_adminips }}"
   tags: [mysql_users]
 
 - name: Ensure other MySQL users are present.
