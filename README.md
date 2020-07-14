@@ -2,18 +2,26 @@
 
 [![Build Status](https://travis-ci.org/geerlingguy/ansible-role-mysql.svg?branch=master)](https://travis-ci.org/geerlingguy/ansible-role-mysql)
 
-Installs MySQL server on RHEL/CentOS or Debian/Ubuntu servers.
+Installs MySQL/Mariadb server on RHEL/CentOS or Debian/Ubuntu servers.
 
 ## Requirements
+No special requirements; note that this role requires root access, so either run it in a playbook with a global `become: true`, or invoke the role in your playbook like:
 
-None.
+    - hosts: database
+      roles:
+        - role: ansible-role-mysql
+          become: true
+
 
 ## Role Variables
 
-Available variables are listed below, along with default values (see `vars/main.yml`):
+Available variables are listed below, along with default values (see `defaults/main.yml`):
 
+```
     mysql_user_home: /root
-
+    mysql_user_name: root
+    mysql_user_password: root
+```
 The home directory inside which Python MySQL settings will be stored, which Ansible will use when connecting to MySQL. This should be the home directory of the user which runs this Ansible role.
 
     mysql_root_password: root

@@ -12,7 +12,7 @@ mysql_root_password: root
 
 mysql_remote_login: true
 
-# Set this to `yes` to forcibly update the root password.
+# Set this to `true` to forcibly update the root password.
 mysql_root_password_update: false
 mysql_user_password_update: false
 

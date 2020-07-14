@@ -145,7 +145,7 @@ syslog
 syslog-tag = {{ mysql_syslog_tag }}
 {% else %}
 skip-syslog
-log-error = {{ mysql_log_error }}
+log_error = {{ mysql_log_error }}
 {% endif %}
 pid-file = {{ mysql_pid_file }}
 

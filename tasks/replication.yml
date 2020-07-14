@@ -24,7 +24,6 @@
     - mysql_replication_master | default(false)
   tags: ['skip_ansible_galaxy']
 
-
 - name: Check master replication status.
   mysql_replication: mode=getmaster
   delegate_to: "{{ mysql_replication_master }}"
