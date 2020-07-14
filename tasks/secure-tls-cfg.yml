@@ -1,3 +1,4 @@
+---
 # Copy keys into place
 # This assumes that the server and client certificates and chains etc are all available
 # In future we will allow then to be generated
@@ -11,7 +12,7 @@
         owner: "{{ mysql_tls_certdir_owner }}"
         group: "{{ mysql_tls_certdir_group }}"
         mode: "{{ mysql_tls_certdir_perms }}"
-      become: yes
+      become: false
 
     - name: Put up the server & client certificates
       copy:
@@ -21,13 +22,13 @@
         group: "{{ mysql_tls_certdir_group }}"
         mode: 0440
       with_items: "{{ mysql_tls_cert_files }}"
-      become: yes
+      become: false
   when: not mysql_tls_generate_certs | bool and mysql_tls_upload_certs
 # generate the keys if required
 
 
 # generate the keys
-
+# yamllint disable rule:line-length
 - name: Generate certificates
   block:
     - name: Create the target keys directory
@@ -37,72 +38,72 @@
         owner: "{{ mysql_tls_certdir_owner }}"
         group: "{{ mysql_tls_certdir_group }}"
         mode: "{{ mysql_tls_certdir_perms }}"
-      become: yes
+      become: false
     - name: Create the certificate details file
       template:
         src: tls-metadata.cnf.j2
         dest: "{{ mysql_tls_certdir }}/tls-metadata.cnf"
 
     - name: Create a new CA key
-      command:  "openssl genrsa 2048 > {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem"
-      become: yes
+      command: "openssl genrsa 2048 > {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem"
+      become: false
       args:
         creates: "{{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem"
 
     - name: Generate the certificate using that key
-      command:  "openssl req -new -x509 -nodes -days 365000 -key {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem -config {{ mysql_tls_certdir }}/tls-metadata.cnf"
-      become: yes
+      command: "openssl req -new -x509 -nodes -days 365000 -key {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem -config {{ mysql_tls_certdir }}/tls-metadata.cnf"
+      become: false
       args:
         creates: "{{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem"
 
     - name: create the server key
-      command:  "openssl req -newkey rsa:2048 -days 365000 -nodes -keyout {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-req.pem -config {{ mysql_tls_certdir }}/tls-metadata.cnf"
-      become: yes
+      command: "openssl req -newkey rsa:2048 -days 365000 -nodes -keyout {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-req.pem -config {{ mysql_tls_certdir }}/tls-metadata.cnf"
+      become: false
       args:
         creates: "{{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem"
 
     - name: process the server RSA key
-      command:  "openssl rsa -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem"
-      become: yes
+      command: "openssl rsa -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-key.pem"
+      become: false
 
     - name: sign the server certificate
-      command:  "openssl x509 -req -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-req.pem -days 365000 -CA {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem -CAkey {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem -set_serial 01 -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-cert.pem"
-      become: yes
+      command: "openssl x509 -req -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-req.pem -days 365000 -CA {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem -CAkey {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem -set_serial 01 -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-cert.pem"
+      become: false
 
     - name: create the client key
-      command:  "openssl req -newkey rsa:2048 -days 365000 -nodes -keyout {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-req.pem -config {{ mysql_tls_certdir }}/tls-metadata.cnf"
-      become: yes
+      command: "openssl req -newkey rsa:2048 -days 365000 -nodes -keyout {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-req.pem -config {{ mysql_tls_certdir }}/tls-metadata.cnf"
+      become: false
       args:
         creates: "{{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem"
 
     - name: process the client RSA key
-      command:  "openssl rsa -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem"
-      become: yes
+      command: "openssl rsa -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-key.pem"
+      become: false
 
     - name: sign the client certificate
-      command:  "openssl x509 -req -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-req.pem -days 365000 -CA {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem -CAkey {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem -set_serial 01 -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-cert.pem"
-      become: yes
+      command: "openssl x509 -req -in {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-req.pem -days 365000 -CA {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem -CAkey {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-key.pem -set_serial 01 -out {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-cert.pem"
+      become: false
 
     - name: Correct the permissions of the certificates and keys
       file:
         dest: "{{ mysql_tls_certdir }}"
         owner: "{{ mysql_tls_certdir_owner }}"
         group: "{{ mysql_tls_certdir_group }}"
-        recurse: yes
-      become: yes
+        recurse: true
+      become: false
 
     # need to check the output of this
     # if ok then certificate name: OK
     # may get certificate signature failure
     - name: verify the certificates to make sure everything was created correctly
-      command:  "openssl verify -CAfile {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-cert.pem {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-cert.pem"
+      command: "openssl verify -CAfile {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}-cert.pem {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}server-cert.pem {{ mysql_tls_certdir }}/{{ mysql_tls_cert_prefix }}client-cert.pem"
       register: verifyresult
       failed_when: "'certificate signature failure' in verifyresult.stdout"
   rescue:
     - debug:
         msg: "Failed to validate the certificates: {{ verifyresult }}"
   when: mysql_tls_generate_certs | bool
-
+# yamllint enable rule:line-length
 
 # update the config
 - name: Update the configs

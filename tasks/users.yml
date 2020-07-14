@@ -28,7 +28,7 @@
     host: "{{ item[1]| default('localhost') }}"
     password: "{{ item[0].password }}"
     priv: "{{ item[0].priv | default('*.*:USAGE') }}"
-    append_privs: yes
+    append_privs: true
     encrypted: "{{ item[0].encrypted | default('no') }}"
     state: present
   become: true
@@ -46,12 +46,12 @@
     password: "{{ item.0.password }}"
     priv: "{{ item.0.priv | default('*.*:USAGE') }}"
     encrypted: "{{ item.0.encrypted }}"
-    append_privs: yes
+    append_privs: true
     state: present
   become: true
   no_log: "{{ not item.0.encrypted | default('yes') }}"
   when: mysql_other_users is defined
   with_subelements:
-     - "{{ mysql_other_users }}"
-     - ips
+    - "{{ mysql_other_users }}"
+    - ips
   tags: [mysql_users]

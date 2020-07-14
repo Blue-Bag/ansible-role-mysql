@@ -92,7 +92,7 @@ mysql_innodb_autoinc_lock_mode: ''
 # 8 cores = 16
 # deprecated and pointless?
 # https://www.percona.com/blog/2012/06/04/thread_concurrency-doesnt-do-what-you-expect/
-#mysql_thread_concurrency: 2
+# mysql_thread_concurrency: 2
 
 # https://www.percona.com/blog/2006/09/29/what-to-tune-in-mysql-server-after-installation/
 # http://optimmysql.blogspot.co.uk/2008/04/variable-day-out-8-innodbadditionalmemp.html
@@ -129,7 +129,7 @@ mysql_config_include_files: []
 #  - src: path/relative/to/playbook/file.cnf
 #  - { src: path/relative/to/playbook/anotherfile.cnf, force: yes }
 
-#mysql_config_include_dirs: []
+# mysql_config_include_dirs: []
 
 # Databases.
 mysql_databases: []
@@ -173,15 +173,15 @@ mysql_replication_user: []
 
 ## allow for use of offical mysql repo
 # see https://github.com/rchouinard/ansible-role-mysql-community-repo/blob/master/tasks/setup-Debian.yml
-mysql_add_repo: False
+mysql_add_repo: false
 mysql_version: '5.7'
 mysql_repo_rpm_url: "https://repo.mysql.com/mysql57-community-release-{% if ansible_distribution == 'Fedora' %}fc{% else %}el{% endif %}{{ ansible_distribution_major_version }}.rpm"
 mysql_repo_deb_url: "https://repo.mysql.com/mysql-apt-config_0.8.9-1_all.deb"
 mysql_repo_key_url: "https://repo.mysql.com/RPM-GPG-KEY-mysql"
-mysql_repo_key_id:  "8C718D3B5072E1F5"
+mysql_repo_key_id: "8C718D3B5072E1F5"
 
 ## Data at rest encryption
-mysql_encrypt_at_rest: no
+mysql_encrypt_at_rest: false
 # filename for keys (no ext)
 mysql_encrypt_keyfile: '.key'
 mysql_encrypt_filename: 'mariadb'
@@ -212,15 +212,15 @@ mysql_encrypt_settings:
 
 mysql_tls_setup: false
 # on | off
-mysql_tls_state: off
+mysql_tls_state: 'off'
 mysql_tls_certdir: '/etc/mysql/tls'
 mysql_tls_config_files:
-      - name: '55-server-tls.cnf'
-        path: "{{ mysql_tls_confdir }}"
-        src: 'mysql-tls-server.cnf.j2'
-      - name: '55-clients-tls.cnf'
-        path: "{{ mysql_tls_confdir }}"
-        src: 'mysql-tls-clients.cnf.j2'
+  - name: '55-server-tls.cnf'
+    path: "{{ mysql_tls_confdir }}"
+    src: 'mysql-tls-server.cnf.j2'
+  - name: '55-clients-tls.cnf'
+    path: "{{ mysql_tls_confdir }}"
+    src: 'mysql-tls-clients.cnf.j2'
 
 mysql_tls_cert_prefix: mysqldb
 
