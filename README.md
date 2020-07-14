@@ -1,6 +1,6 @@
 # Ansible Role: MySQL
 
-[![Build Status](https://travis-ci.org/blue-bag/ansible-role-mysql.svg?branch=master)](https://travis-ci.org/blue-bag/ansible-role-mysql)
+[![Build Status](https://travis-ci.org/Blue-Bag/ansible-role-mysql.svg?branch=master)](https://travis-ci.org/blue-bag/ansible-role-mysql)
 
 Installs MySQL/Mariadb server on RHEL/CentOS or Debian/Ubuntu servers.
 Derived from the geerlingguy.mysql role, this fork provides the following additional functionality:
