@@ -1,3 +1,4 @@
+---
 # set up encryption for the database
 
 - name: Create the target keys directory
@@ -7,37 +8,38 @@
     owner: root
     group: root
     mode: 0755
-  become: yes
+  become: true
 
 - name: Put up the key file
   copy:
-    dest: "{{ mysql_encrypt_keydir}}/{{ mysql_encrypt_keyfile }}"
+    dest: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_keyfile }}"
     content: "{{ mysql_encrypt_key }}"
     owner: mysql
     group: root
     mode: 0440
-  become: yes
+  become: true
 
 - name: Put up the unencrypted keys
   lineinfile:
     path: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt"
     line: "{{ item }}"
-    create: yes
+    create: true
   with_items: "{{ mysql_encrypt_keys }}"
 
+# yamllint disable rule:line-length
 # may be variants of the -pass argument (-passin)
 # openssl enc -aes-256-cbc -md sha1 -pass: file:{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_keyfile }} -in {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt -out {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc
 - name: Encrypt the keys
-  shell:  "openssl enc -aes-256-cbc -md sha1 -pass file:{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_keyfile }} -in {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt -out {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc"
-  become: yes
+  command: "openssl enc -aes-256-cbc -md sha1 -pass file:{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_keyfile }} -in {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt -out {{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc"
+  become: true
   args:
     creates: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.enc"
-
+# yamllint enable rule:line-length
 - name: Delete the unencrypted keys
   file:
-     path: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt"
-     state: absent
-  become: yes
+    path: "{{ mysql_encrypt_keydir }}/{{ mysql_encrypt_filename }}.txt"
+    state: absent
+  become: true
 
 - name: Put up the encryption config
   template:
@@ -47,4 +49,4 @@
     group: root
     mode: 0644
   notify: restart mysql
-  become: yes
+  become: true

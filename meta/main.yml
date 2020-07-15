@@ -2,24 +2,29 @@
 dependencies: []
 
 galaxy_info:
-  author: geerlingguy
+  author: George Boobyer (based on geerlingguy.mysql)
   description: MySQL server for RHEL/CentOS and Debian/Ubuntu.
-  company: "Midwestern Mac, LLC"
+  company: "Blue-Bag, LTD"
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.2
+  min_ansible_version: 2.4
   platforms:
     - name: EL
       versions:
-      - 6
-      - 7
+        - 6
+        - 7
+        - 8
     - name: Ubuntu
       versions:
-      - all
+        - all
     - name: Debian
       versions:
-      - all
+        - all
     - name: Archlinux
       versions:
-      - all
+        - all
   galaxy_tags:
     - database
+    - mysql
+    - mariadb
+    - db
+    - sql

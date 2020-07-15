@@ -112,8 +112,10 @@ event_scheduler = {{ mysql_event_scheduler_state }}
 # https://github.com/geerlingguy/ansible-role-mysql/commit/2d178fe83a66e326465f56f14ef840d7b1577d7b#diff-de3e59b4f406f86179fc137f577b217f
 #max_allowed_packet = {{ mysql_max_allowed_packet }}
 
+{% if mysql_thread_concurrency is defined %}
 # Try number of CPU's * 2 for thread_concurrency.
 thread_concurrency = {{ mysql_thread_concurrency }}
+{% endif %}
 
 # InnoDB settings.
 {% if mysql_supports_innodb_large_prefix and '8.0.' not in mysql_cli_version.stdout %}
@@ -122,7 +124,7 @@ innodb_file_format = {{ mysql_innodb_file_format }}
 {% endif %}
 innodb_file_per_table = {{ mysql_innodb_file_per_table }}
 innodb_buffer_pool_size = {{ mysql_innodb_buffer_pool_size }}
-#deprecated innodb_additional_mem_pool_size = {{ mysql_innodb_additional_mem_pool_size }}
+{#deprecated innodb_additional_mem_pool_size = {{ mysql_innodb_additional_mem_pool_size }} #}
 innodb_log_file_size = {{ mysql_innodb_log_file_size }}
 innodb_log_buffer_size = {{ mysql_innodb_log_buffer_size }}
 innodb_flush_log_at_trx_commit = {{ mysql_innodb_flush_log_at_trx_commit }}
@@ -145,7 +147,7 @@ syslog
 syslog-tag = {{ mysql_syslog_tag }}
 {% else %}
 skip-syslog
-log-error = {{ mysql_log_error }}
+log_error = {{ mysql_log_error }}
 {% endif %}
 pid-file = {{ mysql_pid_file }}
 
