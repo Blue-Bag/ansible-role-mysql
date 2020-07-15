@@ -5,8 +5,6 @@
 
   vars:
     mysql_python_package_debian: python3-mysqldb
-    mysql_root_password_update: true
-    mysql_user_password_update: true
 
   roles:
     - role: ansible-role-mysql
