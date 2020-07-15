@@ -16,27 +16,30 @@
   no_log: "{{ not item.encrypted | default('yes') }}"
   tags: [mysql_users]
 
-- name: set fact3 for inv ips
-  set_fact:
-    db_allowed_adminips: "{{ incoming_ip_whitelist|map(attribute='ip')|list|unique }}"
-  tags: [mysql_users]
-# should check we have allowed ips!!
-
 - name: Ensure MySQL Admin users are present.
-  mysql_user:
-    name: "{{ item[0].name }}"
-    host: "{{ item[1]| default('localhost') }}"
-    password: "{{ item[0].password }}"
-    priv: "{{ item[0].priv | default('*.*:USAGE') }}"
-    append_privs: true
-    encrypted: "{{ item[0].encrypted | default('no') }}"
-    state: present
-  become: true
-  no_log: "{{ not item.0.encrypted | default('yes') }}"
+  block:
+    - name: set fact3 for inv ips
+      set_fact:
+        db_allowed_adminips: "{{ incoming_ip_whitelist|map(attribute='ip')|list|unique }}"
+
+    # should check we have allowed ips!!
+
+    - name: Ensure MySQL Admin users are present.
+      mysql_user:
+        name: "{{ item[0].name }}"
+        host: "{{ item[1]| default('localhost') }}"
+        password: "{{ item[0].password }}"
+        priv: "{{ item[0].priv | default('*.*:USAGE') }}"
+        append_privs: true
+        encrypted: "{{ item[0].encrypted | default('no') }}"
+        state: present
+      become: true
+      no_log: "{{ not item.0.encrypted | default('yes') }}"
+      with_nested:
+        - "{{ mysql_adminusers }}"
+        - "{{ db_allowed_adminips }}"
+
   when: mysql_adminusers is defined
-  with_nested:
-    - "{{ mysql_adminusers }}"
-    - "{{ db_allowed_adminips }}"
   tags: [mysql_users]
 
 - name: Ensure other MySQL users are present.
