@@ -112,7 +112,7 @@ event_scheduler = {{ mysql_event_scheduler_state }}
 # https://github.com/geerlingguy/ansible-role-mysql/commit/2d178fe83a66e326465f56f14ef840d7b1577d7b#diff-de3e59b4f406f86179fc137f577b217f
 #max_allowed_packet = {{ mysql_max_allowed_packet }}
 
-{% if mysql_thread_concurrency %}
+{% if mysql_thread_concurrency is defined %}
 # Try number of CPU's * 2 for thread_concurrency.
 thread_concurrency = {{ mysql_thread_concurrency }}
 {% endif %}
