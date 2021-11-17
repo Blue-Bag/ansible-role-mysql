@@ -20,7 +20,7 @@
   block:
     - name: set fact3 for inv ips
       set_fact:
-        db_allowed_adminips: "{{ incoming_ip_whitelist|map(attribute='ip')|list|unique }}"
+        db_allowed_adminips: "{{ incoming_ip_allowlist|map(attribute='ip')|list|unique }}"
 
     # should check we have allowed ips!!
 
@@ -39,8 +39,25 @@
         - "{{ mysql_adminusers }}"
         - "{{ db_allowed_adminips }}"
 
+    - name: Ensure MySQL Admin users are absent for disallowed host.
+      mysql_user:
+        name: "{{ item[0].name }}"
+        host: "{{ item[1]| default('localhost') }}"
+        password: "{{ item[0].password }}"
+        priv: "{{ item[0].priv | default('*.*:USAGE') }}"
+        append_privs: true
+        encrypted: "{{ item[0].encrypted | default('no') }}"
+        state: absent
+      become: true
+      no_log: "{{ not item.0.encrypted | default('yes') }}"
+      with_nested:
+        - "{{ mysql_adminusers }}"
+        - "{{ mysql_disallowed_ips }}"
+      when: mysql_disallowed_ips | length > 0
+
   when: mysql_adminusers is defined
   tags: [mysql_users]
+  become: true
 
 - name: Ensure other MySQL users are present.
   mysql_user:
