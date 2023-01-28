@@ -1,5 +1,14 @@
 ---
 # Variable configuration.
+
+# - name: debug the var
+#   debug:
+#     msg: "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}"
+#     verbosity: 3
+
+# - meta: end_play
+#   when: ansible_verbosity > 2
+
 - name: Include OS-specific variables.
   include_vars: "{{ item }}"
   with_first_found:

@@ -27,10 +27,10 @@
 - name: Copy my.cnf override files into include directory.
   template:
     src: "{{ item.src }}"
-    dest: "{{ mysql_config_include_dir }}/{{ item.src | basename }}"
-    owner: root
-    group: root
-    mode: 0644
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
     force: "{{ item.force | default(False) }}"
   with_items: "{{ mysql_config_include_files }}"
   notify: restart mysql
