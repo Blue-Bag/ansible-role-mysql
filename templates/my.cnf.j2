@@ -16,7 +16,7 @@ pid-file = {{ mysql_pid_file }}
 {% if mysql_skip_name_resolve %}
 skip-name-resolve
 {% endif %}
-{% if mysql_sql_mode %}
+{% if mysql_sql_mode is not none %}
 sql_mode = {{ mysql_sql_mode }}
 {% endif %}
 
@@ -34,7 +34,7 @@ syslog-tag = {{ mysql_syslog_tag }}
 {% if mysql_log %}
 log = {{ mysql_log }}
 {% endif %}
-log_error = {{ mysql_log_error }}
+log-error = {{ mysql_log_error }}
 {% endif %}
 
 {% if mysql_slow_query_log_enabled %}
@@ -43,6 +43,12 @@ slow_query_log = 1
 slow_query_log_file = {{ mysql_slow_query_log_file }}
 long_query_time = {{ mysql_slow_query_time }}
 {% endif %}
+
+{% if mysql_disable_log_bin and not mysql_replication_master %}
+# Disable binlog to save disk space
+disable-log-bin
+{% endif %}
+
 
 {% if mysql_replication_master %}
 # Replication
@@ -53,7 +59,7 @@ log_bin = mysql-bin
 log-bin-index = mysql-bin.index
 expire_logs_days = {{ mysql_expire_logs_days }}
 max_binlog_size = {{ mysql_max_binlog_size }}
-binlog_format = {{mysql_rep_binlog_format}}
+binlog_format = {{ mmysql_binlog_format }}
 
 {% for db in mysql_databases %}
 {% if db.replicate|default(1) %}

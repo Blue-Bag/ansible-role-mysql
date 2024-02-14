@@ -11,7 +11,6 @@ __mysql_config_file: /etc/mysql/my.cnf
 __mysql_config_include_dir: /etc/mysql/conf.d
 __mysql_socket: /run/mysqld/mysqld.sock
 __mysql_supports_innodb_large_prefix: true
-
 __mysql_encrypt_keydir: /etc/mysql/keys
 
 __mysql_encrypt_supports_enc_tmp_tables: true
@@ -23,3 +22,4 @@ __mysql_config_include_dirs:
 __mysql_tls_confdir: '/etc/mysql/mariadb.conf.d/'
 
 mysql_python_package_debian: python3-mysqldb 
+
