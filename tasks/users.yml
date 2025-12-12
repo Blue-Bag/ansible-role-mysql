@@ -7,6 +7,7 @@
   with_items:
     - FLUSH PRIVILEGES
   changed_when: False
+  tags: [mysql_users]
 
 
 - name: Ensure MySQL users are present.
