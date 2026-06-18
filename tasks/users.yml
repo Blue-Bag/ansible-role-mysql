@@ -11,7 +11,7 @@
 
 
 - name: Ensure MySQL users are present.
-  community.mysql.mysql_user:
+  ansible.mysql.mysql_user:
     name: "{{ item.name }}"
     host: "{{ item.host | default('localhost') }}"
     password: "{{ item.password }}"
@@ -33,7 +33,7 @@
     # should check we have allowed ips!!
 
     - name: Ensure MySQL Admin users are present.
-      community.mysql.mysql_user:
+      ansible.mysql.mysql_user:
         name: "{{ item[0].name }}"
         host: "{{ item[1]| default('localhost') }}"
         password: "{{ item[0].password }}"
@@ -48,7 +48,7 @@
         - "{{ db_allowed_adminips }}"
 
     - name: Ensure MySQL Admin users are absent for disallowed host.
-      community.mysql.mysql_user:
+      ansible.mysql.mysql_user:
         name: "{{ item[0].name }}"
         host: "{{ item[1]| default('localhost') }}"
         password: "{{ item[0].password }}"
@@ -68,7 +68,7 @@
   become: true
 
 - name: Ensure other MySQL users are present.
-  community.mysql.mysql_user:
+  ansible.mysql.mysql_user:
     name: "{{ item.0.name }}"
     host: "{{ item.1| default('localhost') }}"
     password: "{{ item.0.password }}"
