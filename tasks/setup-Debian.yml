@@ -10,11 +10,17 @@
         deb: "{{ mysql_repo_deb_url }}"
         state: present
 
+    - name: Ensure apt keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
     - name: Import repository GPG key
-      apt_key:
-        id: "{{ mysql_repo_key_id }}"
+      ansible.builtin.get_url:
         url: "{{ mysql_repo_key_url }}"
-        state: present
+        dest: /etc/apt/keyrings/mysql.asc
+        mode: "0644"
 
     - name: Configure the apt repo sources for MySQL.
       template:
