@@ -130,6 +130,9 @@ innodb_file_format = {{ mysql_innodb_file_format }}
 {% endif %}
 innodb_file_per_table = {{ mysql_innodb_file_per_table }}
 innodb_buffer_pool_size = {{ mysql_innodb_buffer_pool_size }}
+{% if mysql_innodb_buffer_pool_size_max | default('') %}
+  innodb_buffer_pool_size_max = {{ mysql_innodb_buffer_pool_size_max }}
+{% endif %}
 {#deprecated innodb_additional_mem_pool_size = {{ mysql_innodb_additional_mem_pool_size }} #}
 innodb_log_file_size = {{ mysql_innodb_log_file_size }}
 innodb_log_buffer_size = {{ mysql_innodb_log_buffer_size }}
